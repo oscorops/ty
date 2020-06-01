@@ -32,6 +32,36 @@ public class UserController {
 
 
     }
+    
+    @RequestMapping("/fingUserById")
+    publci User fingUserById(User user){
+      User user=userServiceI.getById(user.getUserId());
+        return user;
+    }
+    
+    @RequestMapping("/addUser")
+    public String addUser(User user){
+       Boolean result=userServiceI.sava(user);
+        if(result!=ture){
+        return "fails"
+        }
+        else{
+        return "success"
+        }
+    }
+    
+    public String updateUser(Intger userid,User user){
+      
+        if(userServiceI.findById(userid)==null){
+        return "user does not exist"
+        }
+        else{
+        userSeriviceI.update(userid,User);
+         return "sava success"   
+        }
+   
+    }
+        
     @RequestMapping("/hello")
     public String hello(){
         return "hello world";
