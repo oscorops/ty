@@ -1,6 +1,8 @@
 server:
   port: 8080
 spring:
+  aop:
+    proxy-target-class: true
   datasource:
     url: jdbc:mysql://localhost:3306/tyqttt?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     password: 123456

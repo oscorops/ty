@@ -1,12 +1,18 @@
 package com.tyq.Controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tyq.Entity.User;
 import com.tyq.service.imp.UserServiceI;
+import com.tyq.util.SmsUtil;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.HashMap;
 
 
 @RestController
@@ -20,50 +26,49 @@ public class UserController {
     }
 
     @RequestMapping("/finAll")
-    public List<User> findAll(){
+    public IPage<User> findAll(@RequestParam("pageno") Integer pageno) {
 
-      /*  System.out.println(("----- selectAll method test ------"));
-        List<User> userList = userMapper.selectList(null);
-        Assert.assertEquals(5, userList.size());
-        userList.forEach(System.out::println);*/
-        System.out.println(userServiceI.getById(1));
 
-      return userServiceI.list();
+        if (pageno == null) {
+            pageno = 1;
+        }
+        System.out.println(pageno);
+        IPage<User> page = new Page<>(pageno, 2);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", 2);
+
+
+        return userServiceI.page(page, queryWrapper);
 
 
     }
-    
-    @RequestMapping("/fingUserById")
-    publci User fingUserById(User user){
-      User user=userServiceI.getById(user.getUserId());
-        return user;
-    }
-    
-    @RequestMapping("/addUser")
-    public String addUser(User user){
-       Boolean result=userServiceI.sava(user);
-        if(result!=ture){
-        return "fails"
-        }
-        else{
-        return "success"
-        }
-    }
-    
-    public String updateUser(Intger userid,User user){
-      
-        if(userServiceI.findById(userid)==null){
-        return "user does not exist"
-        }
-        else{
-        userSeriviceI.update(userid,User);
-         return "sava success"   
-        }
-   
-    }
-        
+
+
     @RequestMapping("/hello")
-    public String hello(){
+    public String hello() {
         return "hello world";
+    }
+
+
+    @GetMapping("/sms")
+    public String aliyunsms(@RequestParam("phone") String phone) {
+
+        HashMap<String,Object> map = new HashMap<>();
+
+        String code = String.valueOf((int)((Math.random()*9+1)*1000));
+
+        map.put("code",code);
+
+        SmsUtil sms=new SmsUtil();
+
+        if(sms.sendMsm(phone,map)){
+            return "success";
+        }
+        else {
+            return "false";
+        }
+
+
+
     }
 }
